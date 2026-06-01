@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner Docente Dinámico</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3a8a">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .skeleton { animation: pulse 1.5s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- Header / Navbar -->
+    <header class="bg-blue-900 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
+        <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
+            📅 Planner Docente <span class="text-xs bg-blue-700 px-2 py-1 rounded">v2.0</span>
+        </h1>
+        <div class="flex gap-2">
+            <button id="btn-exportar" class="bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded text-sm font-semibold transition shadow">📦 Exportar Curso</button>
+            <label class="bg-amber-600 hover:bg-amber-700 px-3 py-1.5 rounded text-sm font-semibold transition shadow cursor-pointer">
+                📥 Importar
+                <input type="file" id="btn-importar" class="hidden" accept=".json">
+            </label>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-4 space-y-6">
+
+        <!-- Configuración de Asignaturas y Días -->
+        <section class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2">⚙️ Configuración del Calendario Semanal</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Asignatura</label>
+                    <select id="select-asignatura" class="w-full p-2 border rounded bg-gray-50 font-medium">
+                        <!-- Carga dinámica -->
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Días lectivos semanales</label>
+                    <div class="flex flex-wrap gap-2 py-1">
+                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition">
+                            <input type="checkbox" value="1" class="chk-dia mr-2"> Lun
+                        </label>
+                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition">
+                            <input type="checkbox" value="2" class="chk-dia mr-2"> Mar
+                        </label>
+                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition">
+                            <input type="checkbox" value="3" class="chk-dia mr-2"> Mié
+                        </label>
+                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition">
+                            <input type="checkbox" value="4" class="chk-dia mr-2"> Jue
+                        </label>
+                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition">
+                            <input type="checkbox" value="5" class="chk-dia mr-2"> Vie
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vista de Control Diario -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Panel Izquierdo: Gestión de la Sesión de Hoy -->
+            <div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                <div class="border-b pb-3">
+                    <span id="txt-fecha-hoy" class="text-sm font-semibold text-blue-600 block">Cargando fecha...</span>
+                    <h3 id="txt-asignatura-hoy" class="text-xl font-black text-gray-900 mt-1">-</h3>
+                </div>
+
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <span class="text-xs font-bold uppercase text-blue-700 block mb-1">Sesión Teórica Planificada:</span>
+                    <div id="txt-num-sesion" class="text-2xl font-bold text-blue-900 mb-1">Sesión --</div>
+                    <p id="txt-contenido-sesion" class="text-gray-700 text-sm italic">Cargando secuenciación...</p>
+                </div>
+
+                <!-- Botonera de Eventos Disruptivos -->
+                <div class="space-y-2 pt-2">
+                    <button id="btn-completar" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-lg shadow transition">
+                        ✅ Sesión Impartida con Éxito
+                    </button>
+                    <button id="btn-incidencia" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-bold p-3 rounded-lg border border-red-200 transition flex items-center justify-center gap-2">
+                        ⚠️ Incidencia (Huelga / Festivo / Baja)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel Derecho: Vista de Calendario Dinámico Proyectado -->
+            <div class="lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col">
+                <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">🔮 Línea de Tiempo Dinámica Proyectada</h3>
+                <div id="grid-proyeccion" class="space-y-2 overflow-y-auto max-h-[380px] pr-2 flex-1">
+                    <div class="skeleton h-12 bg-gray-200 rounded"></div>
+                    <div class="skeleton h-12 bg-gray-200 rounded"></div>
+                    <div class="skeleton h-12 bg-gray-200 rounded"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resumen de Fin de Curso (30 de Junio) -->
+        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4 gap-2">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">📊 Memoria y Resumen del Curso Académico</h2>
+                    <p class="text-sm text-gray-500">Historial completo detallado por días reales ejecutados.</p>
+                </div>
+                <button id="btn-print" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded text-sm font-semibold transition">🖨️ Imprimir Memoria Anual</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 text-xs uppercase font-bold border-b">
+                            <th class="p-3">Fecha Real</th>
+                            <th class="p-3">Asignatura</th>
+                            <th class="p-3">Índice Secuencia</th>
+                            <th class="p-3">Contenido Desarrollado / Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-resumen-body" class="text-sm divide-y">
+                        <!-- Inyección vía JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('✅ Service Worker registrado con éxito', reg.scope))
+                    .catch(err => console.error('❌ Error al registrar Service Worker', err));
+            });
+        }
+    </script>
+</body>
+</html>
