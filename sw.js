@@ -1,11 +1,10 @@
-const CACHE_NAME = 'docente-planner-v2';
+const CACHE_NAME = 'docente-planner-ca-v2';
 const ASSETS = [
   './',
   './index.html',
   './app.js',
   './db.js',
-  './manifest.json',
-  'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4'
+  './manifest.json'
 ];
 
 self.addEventListener('install', event => {

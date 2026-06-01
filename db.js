@@ -10,7 +10,6 @@ function initDB() {
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
-            
             if (!db.objectStoreNames.contains('asignaturas')) {
                 db.createObjectStore('asignaturas', { keyPath: 'id' });
             }
