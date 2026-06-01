@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planificador Docent LOMLOE v3.4</title>
-    <!-- Tailwind CSS oficial per CDN -->
+    <title>Planificador Docent LOMLOE</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .skeleton { animation: pulse 1.5s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+    </style>
 </head>
 <body class="bg-[#f8fafc] text-[#334155] font-sans antialiased">
 
-    <!-- Navbar Superior -->
+    <!-- Navbar Minimalista Superior -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
             <h1 class="text-base font-bold tracking-tight text-slate-900 flex items-center gap-2">
-                <span class="p-1.5 bg-slate-900 text-white rounded-lg text-xs font-mono">LOMLOE</span>
+                <span class="p-1.5 bg-slate-900 text-white rounded-lg text-xs">LOMLOE</span>
                 Planificador Docent
             </h1>
             <div class="flex gap-2">
@@ -30,7 +34,7 @@
     <!-- Contingut Principal -->
     <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
 
-        <!-- Secció 1: Configuració de Grups i Matèries -->
+        <!-- Secció 1: Espai de Configuració d'Alta de Rúbrica / Matèries -->
         <section class="bg-white p-5 md:p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
             <div class="border-l-2 border-slate-900 pl-3">
                 <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Configuració de Grups i Programació</h2>
@@ -40,30 +44,33 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nivell Educatiu</label>
-                    <select id="reg-etapa" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden">
+                    <select id="reg-etapa" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden focus:border-slate-400">
                         <option value="1ESO">1r d'ESO</option>
                         <option value="2ESO">2n d'ESO</option>
                         <option value="3ESO">3r d'ESO</option>
-                        <option value="4ESO" selected>4t d'ESO</option>
+                        <option value="4ESO">4t d'ESO</option>
                         <option value="1BAT">1r de Batxillerat</option>
                         <option value="2BAT">2n de Batxillerat</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Matèria Oficial</label>
-                    <select id="reg-materia" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden">
+                    <select id="reg-materia" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden focus:border-slate-400">
+                        <!-- JS -->
                     </select>
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Grup assignat</label>
-                    <select id="reg-grup" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden">
+                    <select id="reg-grup" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden focus:border-slate-400">
                         <option value="A">Grup A</option>
                         <option value="B">Grup B</option>
                         <option value="C">Grup C</option>
                         <option value="D">Grup D</option>
+                        <option value="E">Grup E</option>
+                        <option value="F">Grup F</option>
                     </select>
                 </div>
-                <button id="btn-afegir-materia" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-xs cursor-pointer">
+                <button id="btn-afegir-materia" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-xs">
                     ➕ Afegir Matèria
                 </button>
             </div>
@@ -72,13 +79,9 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Matèria de Treball Activa</label>
-                    <div class="flex gap-2">
-                        <select id="select-asignatura" class="flex-1 p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-semibold text-slate-900 focus:outline-hidden">
-                        </select>
-                        <button id="btn-eliminar-materia" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2.5 rounded-xl border border-rose-200 transition cursor-pointer" title="Eliminar aquesta matèria activa">
-                            🗑️
-                        </button>
-                    </div>
+                    <select id="select-asignatura" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-semibold text-slate-900 focus:outline-hidden">
+                        <!-- JS -->
+                    </select>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Dies setmanals de classe real</label>
@@ -103,50 +106,49 @@
             </div>
         </section>
 
-        <!-- Secció 2: Control Diario i Calendari Projectat -->
+        <!-- Secció 2: Control Diario Estil Diagnòstic (Captura Referència) -->
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- Targeta Esquerra: Estat del Dia d'Avui -->
-            <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
+            <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4 flex flex-col justify-between">
                 <div>
                     <div class="border-b border-slate-100 pb-3">
-                        <span id="txt-fecha-hoy" class="text-xs font-medium text-slate-400 block">Dimecres...</span>
+                        <span id="txt-fecha-hoy" class="text-xs font-medium text-slate-400 block">Carregant...</span>
                         <h3 id="txt-asignatura-hoy" class="text-base font-bold text-slate-900 mt-1">-</h3>
                     </div>
 
-                    <div class="mt-4 p-4 bg-emerald-50/60 border border-emerald-100 rounded-xl relative">
+                    <!-- Targeta tipus checklist / diagnòstic (Inspirat en la captura de l'usuari) -->
+                    <div class="mt-4 p-4 bg-emerald-50/60 border border-emerald-150 rounded-xl">
                         <div class="flex items-start gap-2.5">
                             <div class="mt-0.5 p-1 bg-emerald-500 rounded-full text-white text-[10px] font-bold">✓</div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[10px] font-bold uppercase text-emerald-800 tracking-wider block">Sessió Planificada</span>
-                                    <button id="btn-editar-hoy" class="text-xs text-slate-500 hover:text-slate-900 font-semibold cursor-pointer">✏️ Editar</button>
-                                </div>
+                            <div>
+                                <span class="text-[10px] font-bold uppercase text-emerald-800 tracking-wider block">Sessió Planificada</span>
                                 <div id="txt-num-sesion" class="text-base font-bold text-slate-900 mt-0.5">Sessió --</div>
-                                <p id="txt-contenido-sesion" class="text-xs text-slate-600 mt-1 leading-relaxed italic">Carregant seqüència...</p>
+                                <p id="txt-contenido-sesion" class="text-xs text-slate-600 mt-1 leading-relaxed italic">Carregant la seqüència didàctica...</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-2 pt-2">
-                    <button id="btn-completar" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl text-xs transition shadow-xs cursor-pointer">
+                <div class="space-y-2 pt-4">
+                    <button id="btn-completar" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl text-xs transition shadow-xs">
                         Completar Sessió Acadèmica
                     </button>
-                    <button id="btn-incidencia" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-3 px-4 rounded-xl text-xs border border-rose-200 transition cursor-pointer text-center block">
+                    <button id="btn-incidencia" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-3 px-4 rounded-xl text-xs border border-rose-200 transition text-center block">
                         ⚠️ Registrar Incidència (Vaga / Festiu)
                     </button>
                 </div>
             </div>
 
-            <!-- Targeta Dreta: Línia de Temps Projectada -->
+            <!-- Targeta Dreta: Línia de Temps Proyectada Tipus Diagnòstic (Mòduls nets) -->
             <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col">
                 <div class="border-b border-slate-100 pb-3 mb-4">
                     <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Projecció Dinàmica del Calendari</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Estat futur del temari ajustat automàticament.</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Estat futur de les teves classes modificat en temps real.</p>
                 </div>
                 <div id="grid-proyeccion" class="space-y-2.5 overflow-y-auto max-h-[360px] pr-1 flex-1">
-                    <div class="text-xs text-slate-400 p-4 text-center">Carregant projecció temporal...</div>
+                    <div class="skeleton h-14 bg-slate-100 rounded-xl"></div>
+                    <div class="skeleton h-14 bg-slate-100 rounded-xl"></div>
                 </div>
             </div>
         </section>
@@ -156,9 +158,9 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-4 mb-4 gap-2">
                 <div>
                     <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Historial de Validació del Curs</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Informe d'evidències realitzades.</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Informe d'evidències d'aprenentatge reals executades.</p>
                 </div>
-                <button id="btn-print" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">🖨️ Imprimir PDF Oficial</button>
+                <button id="btn-print" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-semibold transition">🖨️ Imprimir PDF Oficial</button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
@@ -171,6 +173,7 @@
                         </tr>
                     </thead>
                     <tbody id="table-resumen-body" class="divide-y divide-slate-100 text-slate-700">
+                        <!-- JS -->
                     </tbody>
                 </table>
             </div>
