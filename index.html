@@ -3,42 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planificador Docent Dinàmic LOMLOE</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1e3a8a">
+    <title>Planificador Docent LOMLOE v3.1</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .skeleton { animation: pulse 1.5s infinite ease-in-out; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+<body class="bg-[#f8fafc] text-[#334155] font-sans antialiased">
 
-    <!-- Capçalera -->
-    <header class="bg-blue-950 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
-        <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
-            📅 Planificador Docent <span class="text-xs bg-blue-700 px-2 py-1 rounded">LOMLOE</span>
-        </h1>
-        <div class="flex gap-2">
-            <button id="btn-exportar" class="bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded text-sm font-semibold transition shadow">📦 Exportar Curs</button>
-            <label class="bg-amber-600 hover:bg-amber-700 px-3 py-1.5 rounded text-sm font-semibold transition shadow cursor-pointer">
-                📥 Importar
-                <input type="file" id="btn-importar" class="hidden" accept=".json">
-            </label>
+    <!-- Navbar Superior -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+            <h1 class="text-base font-bold tracking-tight text-slate-900 flex items-center gap-2">
+                <span class="p-1.5 bg-slate-900 text-white rounded-lg text-xs">LOMLOE</span>
+                Planificador Docent
+            </h1>
+            <div class="flex gap-2">
+                <button id="btn-exportar" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-xl transition shadow-xs">📦 Exportar</button>
+                <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-xl transition cursor-pointer">
+                    📥 Importar
+                    <input type="file" id="btn-importar" class="hidden" accept=".json">
+                </label>
+            </div>
         </div>
     </header>
 
     <!-- Contingut Principal -->
-    <main class="max-w-7xl mx-auto p-4 space-y-6">
+    <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
 
-        <!-- Formulari d'Alta / Configuració d'Asignatura LOMLOE -->
-        <section class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-4">
-            <h2 class="text-lg font-bold text-gray-700 flex items-center gap-2">⚙️ Configuració i Alta de Matèries (LOMLOE)</h2>
+        <!-- Secció 1: Configuració de Grups i Matèries -->
+        <section class="bg-white p-5 md:p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div class="border-l-2 border-slate-900 pl-3">
+                <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Configuració de Grups i Programació</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Configura les teves línies de treball i dies de classe.</p>
+            </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end bg-gray-50 p-4 rounded-lg border">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">1. Nivell Educatiu</label>
-                    <select id="reg-etapa" class="w-full p-2 border rounded bg-white font-medium text-sm">
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nivell Educatiu</label>
+                    <select id="reg-etapa" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden">
                         <option value="1ESO">1r d'ESO</option>
                         <option value="2ESO">2n d'ESO</option>
                         <option value="3ESO">3r d'ESO</option>
@@ -48,14 +52,13 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">2. Matèria Oficial</label>
-                    <select id="reg-materia" class="w-full p-2 border rounded bg-white font-medium text-sm">
-                        <!-- S'omple dinàmicament per JS segons l'etapa -->
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Matèria Oficial</label>
+                    <select id="reg-materia" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden">
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">3. Grup / Lletra</label>
-                    <select id="reg-grup" class="w-full p-2 border rounded bg-white font-medium text-sm">
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Grup assignat</label>
+                    <select id="reg-grup" class="w-full p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-medium text-slate-800 focus:outline-hidden">
                         <option value="A">Grup A</option>
                         <option value="B">Grup B</option>
                         <option value="C">Grup C</option>
@@ -64,103 +67,415 @@
                         <option value="F">Grup F</option>
                     </select>
                 </div>
-                <button id="btn-afegir-materia" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 rounded text-sm transition shadow">
-                    ➕ Afegir a la meva llista
+                <button id="btn-afegir-materia" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-xs">
+                    ➕ Afegir Matèria
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <!-- Selector de Treball Actiu i Dies -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Selecciona la Matèria Activa</label>
-                    <select id="select-asignatura" class="w-full p-2 border rounded bg-white font-semibold text-blue-900">
-                        <!-- Selector de treball -->
-                    </select>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Matèria de Treball Activa</label>
+                    <div class="flex gap-2">
+                        <select id="select-asignatura" class="flex-1 p-2.5 border border-slate-200 rounded-xl bg-white text-xs font-semibold text-slate-900 focus:outline-hidden">
+                        </select>
+                        <button id="btn-eliminar-materia" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2.5 rounded-xl border border-rose-200 transition" title="Eliminar aquesta matèria activa">
+                            🗑️
+                        </button>
+                    </div>
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Dies lectius d'aquesta matèria</label>
-                    <div class="flex flex-wrap gap-2 py-1">
-                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition text-sm">
-                            <input type="checkbox" value="1" class="chk-dia mr-2"> Dilluns
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Dies setmanals de classe real</label>
+                    <div class="flex flex-wrap gap-2 py-0.5">
+                        <label class="inline-flex items-center bg-slate-50 hover:bg-slate-100 border border-slate-200/60 px-3 py-1.5 rounded-xl cursor-pointer transition text-xs font-medium text-slate-700">
+                            <input type="checkbox" value="1" class="chk-dia mr-2 accent-slate-900"> Dll
                         </label>
-                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition text-sm">
-                            <input type="checkbox" value="2" class="chk-dia mr-2"> Dimarts
+                        <label class="inline-flex items-center bg-slate-50 hover:bg-slate-100 border border-slate-200/60 px-3 py-1.5 rounded-xl cursor-pointer transition text-xs font-medium text-slate-700">
+                            <input type="checkbox" value="2" class="chk-dia mr-2 accent-slate-900"> Dmt
                         </label>
-                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition text-sm">
-                            <input type="checkbox" value="3" class="chk-dia mr-2"> Dimecres
+                        <label class="inline-flex items-center bg-slate-50 hover:bg-slate-100 border border-slate-200/60 px-3 py-1.5 rounded-xl cursor-pointer transition text-xs font-medium text-slate-700">
+                            <input type="checkbox" value="3" class="chk-dia mr-2 accent-slate-900"> Dmc
                         </label>
-                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition text-sm">
-                            <input type="checkbox" value="4" class="chk-dia mr-2"> Dijous
+                        <label class="inline-flex items-center bg-slate-50 hover:bg-slate-100 border border-slate-200/60 px-3 py-1.5 rounded-xl cursor-pointer transition text-xs font-medium text-slate-700">
+                            <input type="checkbox" value="4" class="chk-dia mr-2 accent-slate-900"> Djs
                         </label>
-                        <label class="inline-flex items-center bg-gray-100 px-3 py-1.5 rounded cursor-pointer hover:bg-gray-200 transition text-sm">
-                            <input type="checkbox" value="5" class="chk-dia mr-2"> Divendres
+                        <label class="inline-flex items-center bg-slate-50 hover:bg-slate-100 border border-slate-200/60 px-3 py-1.5 rounded-xl cursor-pointer transition text-xs font-medium text-slate-700">
+                            <input type="checkbox" value="5" class="chk-dia mr-2 accent-slate-900"> Dvd
                         </label>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Control Diari i Línia de Temps -->
+        <!-- Secció 2: Control Diario Estil Diagnòstic -->
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Panell Esquerre: Control de la sessió d'avui -->
-            <div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-4">
-                <div class="border-b pb-3">
-                    <span id="txt-fecha-hoy" class="text-sm font-semibold text-blue-600 block">Carregant data...</span>
-                    <h3 id="txt-asignatura-hoy" class="text-xl font-black text-gray-900 mt-1">-</h3>
+            
+            <!-- Targeta Esquerra: Estat del Dia d'Avui -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4 flex flex-col justify-between">
+                <div>
+                    <div class="border-b border-slate-100 pb-3">
+                        <span id="txt-fecha-hoy" class="text-xs font-medium text-slate-400 block">Carregant...</span>
+                        <h3 id="txt-asignatura-hoy" class="text-base font-bold text-slate-900 mt-1">-</h3>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-emerald-50/60 border border-emerald-100 rounded-xl relative group">
+                        <div class="flex items-start gap-2.5">
+                            <div class="mt-0.5 p-1 bg-emerald-500 rounded-full text-white text-[10px] font-bold">✓</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold uppercase text-emerald-800 tracking-wider block">Sessió Planificada</span>
+                                    <button id="btn-editar-hoy" class="text-xs text-slate-400 hover:text-slate-900" title="Editar contingut d'avui">✏️ Editar</button>
+                                </div>
+                                <div id="txt-num-sesion" class="text-base font-bold text-slate-900 mt-0.5">Sessió --</div>
+                                <p id="txt-contenido-sesion" class="text-xs text-slate-600 mt-1 leading-relaxed italic">Carregant seqüència...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                    <span class="text-xs font-bold uppercase text-blue-700 block mb-1">Sessió Planificada per Avui:</span>
-                    <div id="txt-num-sesion" class="text-2xl font-bold text-blue-900 mb-1">Sessió --</div>
-                    <p id="txt-contenido-sesion" class="text-gray-700 text-sm italic">Carregant secuenciació...</p>
-                </div>
-
-                <div class="space-y-2 pt-2">
-                    <button id="btn-completar" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-lg shadow transition">
-                        ✅ Sessió Impartida amb Èxit
+                <div class="space-y-2 pt-4">
+                    <button id="btn-completar" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl text-xs transition shadow-xs">
+                        Completar Sessió Acadèmica
                     </button>
-                    <button id="btn-incidencia" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-bold p-3 rounded-lg border border-red-200 transition flex items-center justify-center gap-2">
-                        ⚠️ Incidència (Vaga / Festiu / Baixa)
+                    <button id="btn-incidencia" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-3 px-4 rounded-xl text-xs border border-rose-200 transition text-center block">
+                        ⚠️ Registrar Incidència (Vaga / Festiu)
                     </button>
                 </div>
             </div>
 
-            <!-- Panell Dret: Vista de Calendari Dinàmic Proyectat -->
-            <div class="lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col">
-                <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">🔮 Línia de Temps Dinàmica Projectada</h3>
-                <div id="grid-proyeccion" class="space-y-2 overflow-y-auto max-h-[380px] pr-2 flex-1">
-                    <div class="skeleton h-12 bg-gray-200 rounded"></div>
+            <!-- Targeta Dreta: Línia de Temps Projectada -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col">
+                <div class="border-b border-slate-100 pb-3 mb-4">
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Projecció Dinàmica del Calendari</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Estat futur de les teves classes modificat en temps real. Fes clic a ✏️ en qualsevol fila per editar-la.</p>
+                </div>
+                <div id="grid-proyeccion" class="space-y-2.5 overflow-y-auto max-h-[360px] pr-1 flex-1">
+                    <div class="skeleton h-14 bg-slate-100 rounded-xl"></div>
                 </div>
             </div>
         </section>
 
-        <!-- Resum de Final de Curs -->
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4 gap-2">
+        <!-- Secció 3: Memòria Anual -->
+        <section class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-4 mb-4 gap-2">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-900">📊 Memòria Acadèmica Anual</h2>
-                    <p class="text-sm text-gray-500">Historial complet detallat per dies reals executats per a repetir el curs vinent.</p>
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Historial de Validació del Curs</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Informe d'evidències d'aprenentatge reals executades.</p>
                 </div>
-                <button id="btn-print" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded text-sm font-semibold transition">🖨️ Imprimir Memòria</button>
+                <button id="btn-print" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-semibold transition">🖨️ Imprimir PDF Oficial</button>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                        <tr class="bg-gray-100 text-gray-600 text-xs uppercase font-bold border-b">
-                            <th class="p-3">Data Real</th>
-                            <th class="p-3">Matèria i Grup</th>
-                            <th class="p-3">Estat de la Sessió</th>
+                        <tr class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                            <th class="p-3">Data de Classe</th>
+                            <th class="p-3">Matèria Curricular</th>
+                            <th class="p-3">Estat Assolit</th>
                             <th class="p-3">Contingut Desenvolupat</th>
                         </tr>
                     </thead>
-                    <tbody id="table-resumen-body" class="text-sm divide-y">
-                        <!-- Injecció JS -->
+                    <tbody id="table-resumen-body" class="divide-y divide-slate-100 text-slate-700">
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
 
-    <script src="db.js"></script>
-    <script src="app.js"></script>
+    <!-- Script de lògica integrat per garantir l'execució directa -->
+    <script>
+        const MATERIES_LOMLOE = {
+            "1ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Biologia i Geologia", "Educació Física", "Visual i Plàstica"],
+            "2ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Física i Química", "Educació Física", "Música", "Tecnologia i Digitalització"],
+            "3ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Biologia i Geologia", "Física i Química", "Educació Física", "Educació en Valors Cívics"],
+            "4ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques (A/B)", "Geografia i Història", "Educació Física", "Llatí", "Biologia i Geologia", "Física i Química", "Economia i Emprenedoria", "Tecnologia", "Filosofia"],
+            "1BAT": ["Llengua Catalana i Literatura I", "Llengua Castellana i Literatura I", "Anglès I", "Filosofia", "Educació Física", "Matemàtiques I", "Llatí I", "Matemàtiques Aplicades a les CCSS I", "Història del Món Contemporani", "Dibuix Tècnic I", "Química I", "Biologia I"],
+            "2BAT": ["Llengua Catalana i Literatura II", "Llengua Castellana i Literatura II", "Anglès II", "Història d'Espanya", "Història de la Filosofia", "Matemàtiques II", "Llatí II", "Matemàtiques Aplicades a les CCSS II", "Geografia", "Física II", "Química II", "Biologia II", "Història de l'Art"]
+        };
+
+        let asignaturas = JSON.parse(localStorage.getItem('asig')) || [
+            { id: "1ESO-Matemàtiques-A", nombre: "1r d'ESO - Matemàtiques (Grup A)", diasLectivos: [1, 3] },
+            { id: "4ESO-Tecnologia-A", nombre: "4t d'ESO - Tecnologia (Grup A)", diasLectivos: [1, 2, 3] }
+        ];
+        let historial = JSON.parse(localStorage.getItem('hist')) || [];
+        let secuencias = JSON.parse(localStorage.getItem('sec')) || [];
+
+        // Generar seqüències per defecte si està buit
+        if (secuencias.length === 0) {
+            asignaturas.forEach(a => {
+                for (let i = 1; i <= 15; i++) {
+                    secuencias.push({ id: "SEC-" + a.id + "-" + i, curso: a.id, orden: i, contenido: "Unitat o bloc d'aprenentatge curricular planificat per a la sessió número " + i });
+                }
+            });
+        }
+
+        let asignaturaSeleccionada = asignaturas[0] ? asignaturas[0].id : "";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initLOMLOEDropdowns();
+            initUI();
+            recalcularYRenderizar();
+        });
+
+        function guardar() {
+            localStorage.setItem('asig', JSON.stringify(asignaturas));
+            localStorage.setItem('hist', JSON.stringify(historial));
+            localStorage.setItem('sec', JSON.stringify(secuencias));
+        }
+
+        function initLOMLOEDropdowns() {
+            const etapaSelect = document.getElementById('reg-etapa');
+            const materiaSelect = document.getElementById('reg-materia');
+
+            function actualizarMaterias() {
+                const etapa = etapaSelect.value;
+                const llista = MATERIES_LOMLOE[etapa] || [];
+                materiaSelect.innerHTML = llista.map(m => '<option value="' + m + '">' + m + '</option>').join('');
+            }
+
+            etapaSelect.addEventListener('change', actualizarMaterias);
+            actualizarMaterias();
+
+            document.getElementById('btn-afegir-materia').addEventListener('click', () => {
+                const etapaTxt = etapaSelect.options[etapaSelect.selectedIndex].text;
+                const materia = materiaSelect.value;
+                const grup = document.getElementById('reg-grup').value;
+                
+                const idGenerat = etapaSelect.value + "-" + materia.replace(/\s+/g, '') + "-" + grup;
+                const nomComplet = etapaTxt + " - " + materia + " (Grup " + grup + ")";
+
+                if (asignaturas.some(a => a.id === idGenerat)) return alert("⚠️ Aquesta matèria i grup ja estan registrats.");
+
+                asignaturas.push({ id: idGenerat, nombre: nomComplet, diasLectivos: [1, 3] });
+
+                for (let i = 1; i <= 15; i++) {
+                    secuencias.push({ id: "SEC-" + idGenerat + "-" + i, curso: idGenerat, orden: i, contenido: "Programació curricular: Contingut didàctic detallat per a la sessió " + i });
+                }
+
+                asignaturaSeleccionada = idGenerat;
+                guardar();
+                actualizarSelectorTrabajo();
+                marcarChecksDias();
+                recalcularYRenderizar();
+            });
+        }
+
+        function actualizarSelectorTrabajo() {
+            const sel = document.getElementById('select-asignatura');
+            sel.innerHTML = asignaturas.map(a => '<option value="' + a.id + '" ' + (a.id === asignaturaSeleccionada ? 'selected' : '') + '>' + a.nombre + '</option>').join('');
+            if (asignaturas.length === 0) {
+                sel.innerHTML = '<option value="">Sense matèries actives</option>';
+            }
+        }
+
+        function initUI() {
+            actualizarSelectorTrabajo();
+            document.getElementById('select-asignatura').addEventListener('change', (e) => {
+                asignaturaSeleccionada = e.target.value;
+                marcarChecksDias();
+                recalcularYRenderizar();
+            });
+
+            document.querySelectorAll('.chk-dia').forEach(chk => {
+                chk.addEventListener('change', () => {
+                    const asig = asignaturas.find(a => a.id === asignaturaSeleccionada);
+                    if (!asig) return;
+                    asig.diasLectivos = Array.from(document.querySelectorAll('.chk-dia:checked')).map(c => parseInt(c.value));
+                    guardar();
+                    recalcularYRenderizar();
+                });
+            });
+
+            document.getElementById('btn-completar').addEventListener('click', () => registrarDiaClase('IMPARTIDA'));
+            document.getElementById('btn-incidencia').addEventListener('click', () => registrarDiaClase('VAGA / INCIDÈNCIA'));
+            document.getElementById('btn-print').addEventListener('click', () => window.print());
+            
+            // ELIMINAR MATÈRIA
+            document.getElementById('btn-eliminar-materia').addEventListener('click', () => {
+                if (!asignaturaSeleccionada) return alert("No hi ha cap matèria seleccionada.");
+                if (confirm("Estàs segur que vols eliminar completament aquesta matèria, les seves lliçons i el seu historial?")) {
+                    asignaturas = asignaturas.filter(a => a.id !== asignaturaSeleccionada);
+                    secuencias = secuencias.filter(s => s.curso !== asignaturaSeleccionada);
+                    historial = historial.filter(h => h.asignaturaId !== asignaturaSeleccionada);
+                    asignaturaSeleccionada = asignaturas.length > 0 ? asignaturas[0].id : "";
+                    guardar();
+                    actualizarSelectorTrabajo();
+                    marcarChecksDias();
+                    recalcularYRenderizar();
+                }
+            });
+
+            // EDITAR LLICÓ D'AVUI
+            document.getElementById('btn-editar-hoy').addEventListener('click', () => {
+                const asigActual = asignaturas.find(a => a.id === asignaturaSeleccionada);
+                if (!asigActual) return;
+                const secuenciaAsig = secuencias.filter(s => s.curso === asignaturaSeleccionada).sort((a,b) => a.orden - b.orden);
+                const historialAsig = historial.filter(h => h.asignaturaId === asignaturaSeleccionada);
+                
+                let numImpartidas = historialAsig.filter(h => h.estado === 'IMPARTIDA').length;
+                let actual = secuenciaAsig[numImpartidas];
+                if (!actual) return alert("No hi ha cap lliçó pendent programada.");
+
+                let nouText = prompt("Edita el contingut de la sessió actual:", actual.contenido);
+                if (nouText !== null && nouText.trim() !== "") {
+                    actual.contenido = nouText;
+                    guardar();
+                    recalcularYRenderizar();
+                }
+            });
+            
+            document.getElementById('btn-exportar').addEventListener('click', () => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ asignaturas, historial, secuencias }));
+                const dl = document.createElement('a'); dl.href = dataStr; dl.download = "planificador.json"; dl.click();
+            });
+
+            document.getElementById('btn-importar').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const parsed = JSON.parse(evt.target.result);
+                        if (parsed.asignaturas) asignaturas = parsed.asignaturas;
+                        if (parsed.historial) historial = parsed.historial;
+                        if (parsed.secuencias) secuencias = parsed.secuencias;
+                        asignaturaSeleccionada = asignaturas.length > 0 ? asignaturas[0].id : "";
+                        guardar();
+                        actualizarSelectorTrabajo();
+                        marcarChecksDias();
+                        recalcularYRenderizar();
+                        alert("Dades importades correctament!");
+                    } catch(err) {
+                        alert("Error en el format del fitxer.");
+                    }
+                };
+                reader.readAsText(file);
+            });
+            
+            marcarChecksDias();
+        }
+
+        function marcarChecksDias() {
+            const asig = asignaturas.find(a => a.id === asignaturaSeleccionada);
+            document.querySelectorAll('.chk-dia').forEach(chk => {
+                chk.checked = asig ? asig.diasLectivos.includes(parseInt(chk.value)) : false;
+            });
+        }
+
+        function registrarDiaClase(estado) {
+            if (!asignaturaSeleccionada) return alert("Siusplau, afegeix una matèria primer.");
+            const fecha = new Date().toISOString().split('T')[0];
+            
+            // Evitar duplicar el mateix dia per a la mateixa matèria
+            if (historial.some(h => h.fechaReal === fecha && h.asignaturaId === asignaturaSeleccionada)) {
+                if (!confirm("Ja has registrat un estat per avui. Vols reescriure'l?")) return;
+                historial = historial.filter(h => !(h.fechaReal === fecha && h.asignaturaId === asignaturaSeleccionada));
+            }
+
+            historial.push({ fechaReal: fecha, asignaturaId: asignaturaSeleccionada, estado: estado });
+            guardar();
+            recalcularYRenderizar();
+        }
+
+        window.editarFilaFutura = function(idSecuencia) {
+            let item = secuencias.find(s => s.id === idSecuencia);
+            if (!item) return;
+            let nouText = prompt("Edita el contingut d'aquesta sessió futura:", item.contenido);
+            if (nouText !== null && nouText.trim() !== "") {
+                item.contenido = nouText;
+                guardar();
+                recalcularYRenderizar();
+            }
+        };
+
+        function recalcularYRenderizar() {
+            const hoyStr = new Date().toISOString().split('T')[0];
+            document.getElementById('txt-fecha-hoy').innerText = new Date().toLocaleDateString('ca-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
+
+            if (!asignaturaSeleccionada) {
+                document.getElementById('txt-asignatura-hoy').innerText = "Sense matèries actives";
+                document.getElementById('txt-num-sesion').innerText = "Sessió --";
+                document.getElementById('txt-contenido-sesion').innerText = "Crea una matèria des del mòdul superior per començar.";
+                document.getElementById('grid-proyeccion').innerHTML = '<div class="text-xs text-slate-400 p-4 text-center">No hi ha contingut projectat.</div>';
+                document.getElementById('table-resumen-body').innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Cap registre validat.</td></tr>';
+                return;
+            }
+
+            const asigActual = asignaturas.find(a => a.id === asignaturaSeleccionada);
+            if (!asigActual) return;
+
+            document.getElementById('txt-asignatura-hoy').innerText = asigActual.nombre;
+
+            const secuenciaAsig = secuencias.filter(s => s.curso === asignaturaSeleccionada).sort((a,b) => a.orden - b.orden);
+            const historialAsig = historial.filter(h => h.asignaturaId === asignaturaSeleccionada);
+
+            let htmlProyeccion = ""; 
+            let htmlResumen = ""; 
+            let indiceSecuenciaActual = 0; 
+            let fechaBucle = new Date(); 
+            let clasesCalculadas = 0;
+
+            // Render històric complet global de l'aplicació
+            historial.forEach(h => {
+                const asig = asignaturas.find(a => a.id === h.asignaturaId);
+                htmlResumen += '<tr class="border-b border-slate-100">' +
+                    '<td class="p-3 font-semibold">' + h.fechaReal + '</td>' +
+                    '<td class="p-3">' + (asig ? asig.nombre : 'Matèria eliminada') + '</td>' +
+                    '<td class="p-3"><span class="px-2 py-0.5 rounded-md text-[10px] font-bold ' + (h.estado.includes('VAGA') ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800') + '">' + h.estado + '</span></td>' +
+                    '<td class="p-3">' + (h.estado.includes('VAGA') ? 'Classe desplaçada en cascada' : 'Sessió lectiva completada') + '</td>' +
+                '</tr>';
+            });
+            document.getElementById('table-resumen-body').innerHTML = htmlResumen || '<tr><td colspan="4" class="p-4 text-center text-slate-400">Cap registre validat encara en aquest ordinador.</td></tr>';
+
+            // Algorisme de simulació del calendari en cascada
+            while (clasesCalculadas < 15) {
+                const diaSemana = fechaBucle.getDay();
+                const fechaIso = fechaBucle.toISOString().split('T')[0];
+
+                if (asigActual.diasLectivos.includes(diaSemana)) {
+                    const recordHistorial = historialAsig.find(h => h.fechaReal === fechaIso);
+                    
+                    let actualSec = secuenciaAsig[indiceSecuenciaActual];
+                    let estadoTexto = actualSec ? "S." + actualSec.orden : "Fi";
+                    let contenidoClase = actualSec ? actualSec.contenido : "Mòdul finalitzat.";
+                    let cssEstilo = "bg-white border-slate-200 text-slate-600";
+                    let botonEditarFila = actualSec ? '<button onclick="editarFilaFutura('' + actualSec.id + '')" class="text-[10px] bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-md text-slate-500 ml-2">✏️</button>' : '';
+
+                    if (recordHistorial) {
+                        if (recordHistorial.estado.includes('VAGA')) {
+                            estadoTexto = "⚠️ ANUL·LAT";
+                            contenidoClase = "Incidència de calendari (Vaga/Festiu). El temari sencer es mou en cascada.";
+                            cssEstilo = "bg-rose-50/50 border-rose-200 text-rose-900/60 line-through";
+                            botonEditarFila = ""; // No editable si està tancat
+                        } else {
+                            cssEstilo = "bg-emerald-50/40 border-emerald-200 text-slate-700 font-medium";
+                            if (actualSec) indiceSecuenciaActual++;
+                        }
+                    } else {
+                        if (actualSec) indiceSecuenciaActual++;
+                    }
+
+                    if (fechaIso === hoyStr) {
+                        const sHoy = secuenciaAsig[indiceSecuenciaActual - 1] || { orden: "--", contenido: "Cap lliçó pendent configurada." };
+                        document.getElementById('txt-num-sesion').innerText = "Sessió " + sHoy.orden;
+                        document.getElementById('txt-contenido-sesion').innerText = sHoy.contenido;
+                    }
+
+                    htmlProyeccion += '<div class="p-3 border rounded-xl flex justify-between items-center ' + cssEstilo + '">' +
+                        '<div class="flex-1">' +
+                            '<span class="text-[10px] font-bold block uppercase text-slate-400">' + fechaBucle.toLocaleDateString('ca-ES', { weekday: 'short', month: 'short', day: 'numeric' }) + '</span>' +
+                            '<p class="text-xs mt-0.5">' + contenidoClase + '</p>' +
+                        '</div>' +
+                        '<div class="flex items-center gap-1">' +
+                            '<span class="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">' + estadoTexto + '</span>' +
+                            botonEditarFila +
+                        '</div>' +
+                    '</div>';
+                    clasesCalculadas++;
+                }
+                fechaBucle.setDate(fechaBucle.getDate() + 1);
+            }
+            document.getElementById('grid-proyeccion').innerHTML = htmlProyeccion;
+        }
+    </script>
 </body>
 </html>
