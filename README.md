@@ -1,3 +1,3 @@
-# Planificador Docent LOMLOE v3.1
+# 📅 Planificador Docent LOMLOE v3.2
 
-Interfície millorada amb funcions d'edició ràpida de lliçons i esborrat de grups actius.
+Codi font complet actualitzat i lliure d'errors de càrrega.

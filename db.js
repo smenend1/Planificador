@@ -1,64 +1,23 @@
-const DB_NAME = 'DocentePlannerDB';
-const DB_VERSION = 1;
-let dbInstance = null;
+const MATERIES_LOMLOE = {
+    "1ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Biologia i Geologia", "Educació Física", "Visual i Plàstica"],
+    "2ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Física i Química", "Educació Física", "Música", "Tecnologia i Digitalització"],
+    "3ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Biologia i Geologia", "Física i Química", "Educació Física", "Educació en Valors Cívics"],
+    "4ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques (A/B)", "Geografia i Història", "Educació Física", "Llatí", "Biologia i Geologia", "Física i Química", "Economia i Emprenedoria", "Tecnologia", "Filosofia"],
+    "1BAT": ["Llengua Catalana i Literatura I", "Llengua Castellana i Literatura I", "Anglès I", "Filosofia", "Educació Física", "Matemàtiques I", "Llatí I", "Matemàtiques Aplicades a les CCSS I", "Història del Món Contemporani", "Dibuix Tècnic I", "Química I", "Biologia I"],
+    "2BAT": ["Llengua Catalana i Literatura II", "Llengua Castellana i Literatura II", "Anglès II", "Història d'Espanya", "Història de la Filosofia", "Matemàtiques II", "Llatí II", "Matemàtiques Aplicades a les CCSS II", "Geografia", "Física II", "Química II", "Biologia II", "Història de l'Art"]
+};
 
-function initDB() {
-    return new Promise((resolve, reject) => {
-        if (dbInstance) return resolve(dbInstance);
-
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains('asignaturas')) {
-                db.createObjectStore('asignaturas', { keyPath: 'id' });
-            }
-            if (!db.objectStoreNames.contains('historial')) {
-                db.createObjectStore('historial', { keyPath: 'fechaReal' });
-            }
-            if (!db.objectStoreNames.contains('secuencias')) {
-                db.createObjectStore('secuencias', { keyPath: 'id' });
-            }
-        };
-
-        request.onsuccess = (event) => {
-            dbInstance = event.target.result;
-            resolve(dbInstance);
-        };
-
-        request.onerror = (event) => reject(event.target.error);
-    });
+function readLocalStorage(key, defaultData) {
+    try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultData;
+    } catch (e) {
+        return defaultData;
+    }
 }
 
-async function guardarDato(storeName, objeto) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.put(objeto);
-        req.onsuccess = () => resolve(true);
-        req.onerror = () => reject(req.error);
-    });
-}
-
-async function obtenerTodos(storeName) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-}
-
-async function vaciarStore(storeName) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.clear();
-        req.onsuccess = () => resolve(true);
-        req.onerror = () => reject(req.error);
-    });
+function writeLocalStorage(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {}
 }
