@@ -1,17 +1,1 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-@import "https://cdn.jsdelivr.net/npm/tailwindcss@4.0.0-alpha.32/dist/index.css";
-
-:root {
-    font-family: 'Inter', sans-serif;
-}
-
-body {
-    background-color: #f8fafc;
-}
-
-/* Configuració de checkbox estilitzat */
-input[type="checkbox"] {
-    accent-color: #0f172a;
-    width: 14px;
-    height: 14px;
-}
+/* Els estils ara s'executen de forma directa des del CDN de Tailwind a l'index.html per evitar conflictes */

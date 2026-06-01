@@ -1,3 +1,3 @@
-# 📅 Planificador Docent LOMLOE v3.2
+# 📅 Solució de Càrrega i Disseny per a GitHub Pages
 
-Codi font complet actualitzat i lliure d'errors de càrrega.
+Correcció completa.

@@ -1,32 +1,38 @@
-let asignaturas = readLocalStorage('asig', [
+// Lògica de control unificada i robusta per a GitHub Pages
+let asignaturas = JSON.parse(localStorage.getItem('asig')) || [
     { id: "4ESO-Tecnologia-A", nombre: "4t d'ESO - Tecnologia (Grup A)", diasLectivos: [1, 2, 3] },
     { id: "1ESO-Matemàtiques-A", nombre: "1r d'ESO - Matemàtiques (Grup A)", diasLectivos: [1, 3] }
-]);
-let historial = readLocalStorage('hist', []);
-let secuencias = readLocalStorage('sec', []);
+];
+let historial = JSON.parse(localStorage.getItem('hist')) || [];
+let secuencias = JSON.parse(localStorage.getItem('sec')) || [];
 
-// Generar temari per defecte si està net
+// Inicialitzar contingut si està completament net
 if (secuencias.length === 0) {
     asignaturas.forEach(a => {
-        for (let i = 1; i <= 20; i++) {
+        for (let i = 1; i <= 15; i++) {
             secuencias.push({ id: "SEC-" + a.id + "-" + i, curso: a.id, orden: i, contenido: "Tema de treball planificat: Sessió número " + i + " de la programació curricular." });
         }
     });
-    writeLocalStorage('sec', secuencias);
 }
 
 let asignaturaSeleccionada = asignaturas[0] ? asignaturas[0].id : "";
 
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
     initLOMLOEDropdowns();
-    initUIElements();
+    initUI();
     recalcularYRenderizar();
 });
+
+function guardar() {
+    localStorage.setItem('asig', JSON.stringify(asignaturas));
+    localStorage.setItem('hist', JSON.stringify(historial));
+    localStorage.setItem('sec', JSON.stringify(secuencias));
+}
 
 function initLOMLOEDropdowns() {
     const etapaSelect = document.getElementById('reg-etapa');
     const materiaSelect = document.getElementById('reg-materia');
-    if(!etapaSelect || !materiaSelect) return;
+    if (!etapaSelect || !materiaSelect) return;
 
     function actualizarMaterias() {
         const etapa = etapaSelect.value;
@@ -45,16 +51,16 @@ function initLOMLOEDropdowns() {
         const idGenerat = etapaSelect.value + "-" + materia.replace(/\s+/g, '') + "-" + grup;
         const nomComplet = etapaTxt + " - " + materia + " (Grup " + grup + ")";
 
-        if (asignaturas.some(a => a.id === idGenerat)) return alert("⚠️ Ja existeix aquesta matèria.");
+        if (asignaturas.some(a => a.id === idGenerat)) return alert("⚠️ Aquesta matèria ja està registrada.");
 
         asignaturas.push({ id: idGenerat, nombre: nomComplet, diasLectivos: [1, 2, 3] });
 
-        for (let i = 1; i <= 20; i++) {
-            secuencias.push({ id: "SEC-" + idGenerat + "-" + i, curso: idGenerat, orden: i, contenido: "Tema de treball planificat: Sessió número " + i + " de la programació curricular." });
+        for (let i = 1; i <= 15; i++) {
+            secuencias.push({ id: "SEC-" + idGenerat + "-" + i, curso: idGenerat, orden: i, contenido: "Programació de contingut: Sessió " + i });
         }
 
         asignaturaSeleccionada = idGenerat;
-        saveAll();
+        guardar();
         actualizarSelectorTrabajo();
         marcarChecksDias();
         recalcularYRenderizar();
@@ -63,49 +69,44 @@ function initLOMLOEDropdowns() {
 
 function actualizarSelectorTrabajo() {
     const sel = document.getElementById('select-asignatura');
-    if(!sel) return;
+    if (!sel) return;
     sel.innerHTML = asignaturas.map(a => '<option value="' + a.id + '" ' + (a.id === asignaturaSeleccionada ? 'selected' : '') + '>' + a.nombre + '</option>').join('');
     if (asignaturas.length === 0) sel.innerHTML = '<option value="">Sense matèries actives</option>';
 }
 
-function marcarChecksDias() {
-    const asig = asignaturas.find(a => a.id === asignaturaSeleccionada);
-    document.querySelectorAll('.chk-dia').forEach(chk => {
-        chk.checked = asig ? asig.diasLectivos.includes(parseInt(chk.value)) : false;
-    });
-}
-
-function initUIElements() {
+function initUI() {
     actualizarSelectorTrabajo();
-    
-    document.getElementById('select-asignatura').addEventListener('change', (e) => {
-        asignaturaSeleccionada = e.target.value;
-        marcarChecksDias();
-        recalcularYRenderizar();
-    });
+    const selAsig = document.getElementById('select-asignatura');
+    if(selAsig) {
+        selAsig.addEventListener('change', (e) => {
+            asignaturaSeleccionada = e.target.value;
+            marcarChecksDias();
+            recalcularYRenderizar();
+        });
+    }
 
     document.querySelectorAll('.chk-dia').forEach(chk => {
         chk.addEventListener('change', () => {
             const asig = asignaturas.find(a => a.id === asignaturaSeleccionada);
             if (!asig) return;
             asig.diasLectivos = Array.from(document.querySelectorAll('.chk-dia:checked')).map(c => parseInt(c.value));
-            saveAll();
+            guardar();
             recalcularYRenderizar();
         });
     });
 
-    document.getElementById('btn-completar').addEventListener('click', () => registrarDia('IMPARTIDA'));
-    document.getElementById('btn-incidencia').addEventListener('click', () => registrarDia('VAGA / FESTIU / BAIXA'));
+    document.getElementById('btn-completar').addEventListener('click', () => registrarDiaClase('IMPARTIDA'));
+    document.getElementById('btn-incidencia').addEventListener('click', () => registrarDiaClase('VAGA / FESTIU'));
     document.getElementById('btn-print').addEventListener('click', () => window.print());
-
+    
     document.getElementById('btn-eliminar-materia').addEventListener('click', () => {
-        if (!asignaturaSeleccionada) return alert("Selecciona una matèria.");
-        if (confirm("Vols eliminar de la memòria aquesta matèria i totes les seves dades associades?")) {
+        if (!asignaturaSeleccionada) return alert("No hi ha matèria.");
+        if (confirm("Vols eliminar completament aquesta matèria activa?")) {
             asignaturas = asignaturas.filter(a => a.id !== asignaturaSeleccionada);
             secuencias = secuencias.filter(s => s.curso !== asignaturaSeleccionada);
             historial = historial.filter(h => h.asignaturaId !== asignaturaSeleccionada);
             asignaturaSeleccionada = asignaturas.length > 0 ? asignaturas[0].id : "";
-            saveAll();
+            guardar();
             actualizarSelectorTrabajo();
             marcarChecksDias();
             recalcularYRenderizar();
@@ -117,19 +118,19 @@ function initUIElements() {
         const historialAsig = historial.filter(h => h.asignaturaId === asignaturaSeleccionada);
         let numImpartidas = historialAsig.filter(h => h.estado === 'IMPARTIDA').length;
         let actual = secuenciaAsig[numImpartidas];
-        if (!actual) return alert("No hi ha sessions pendents.");
+        if (!actual) return alert("Fi de la planificació.");
 
-        let nouText = prompt("Modifica la lliçó d'avui:", actual.contenido);
+        let nouText = prompt("Edita el text de la lliçó actual:", actual.contenido);
         if (nouText !== null && nouText.trim() !== "") {
             actual.contenido = nouText;
-            saveAll();
+            guardar();
             recalcularYRenderizar();
         }
     });
-
+    
     document.getElementById('btn-exportar').addEventListener('click', () => {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ asignaturas, historial, secuencias }));
-        const dl = document.createElement('a'); dl.href = dataStr; dl.download = "planificador_data.json"; dl.click();
+        const dl = document.createElement('a'); dl.href = dataStr; dl.download = "planificador.json"; dl.click();
     });
 
     document.getElementById('btn-importar').addEventListener('change', (e) => {
@@ -143,64 +144,68 @@ function initUIElements() {
                 if (parsed.historial) historial = parsed.historial;
                 if (parsed.secuencias) secuencias = parsed.secuencias;
                 asignaturaSeleccionada = asignaturas.length > 0 ? asignaturas[0].id : "";
-                saveAll();
+                guardar();
                 actualizarSelectorTrabajo();
                 marcarChecksDias();
                 recalcularYRenderizar();
-            } catch(e) { alert("Format incorrecte."); }
+            } catch(err) { alert("Error de fitxer."); }
         };
         reader.readAsText(file);
     });
-
+    
     marcarChecksDias();
 }
 
-function registrarDia(estado) {
+function marcarChecksDias() {
+    const asig = asignaturas.find(a => a.id === asignaturaSeleccionada);
+    document.querySelectorAll('.chk-dia').forEach(chk => {
+        chk.checked = asig ? asig.diasLectivos.includes(parseInt(chk.value)) : false;
+    });
+}
+
+function registrarDiaClase(estado) {
     if (!asignaturaSeleccionada) return;
-    const fStr = new Date().toISOString().split('T')[0];
-    historial = historial.filter(h => !(h.fechaReal === fStr && h.asignaturaId === asignaturaSeleccionada));
-    historial.push({ fechaReal: fStr, asignaturaId: asignaturaSeleccionada, estado: estado });
-    saveAll();
+    const fecha = new Date().toISOString().split('T')[0];
+    historial = historial.filter(h => !(h.fechaReal === fecha && h.asignaturaId === asignaturaSeleccionada));
+    historial.push({ fechaReal: fecha, asignaturaId: asignaturaSeleccionada, estado: estado });
+    guardar();
     recalcularYRenderizar();
 }
 
-window.editarFilaFutura = function(idSec) {
-    let item = secuencias.find(s => s.id === idSec);
+window.editarFilaFutura = function(idSecuencia) {
+    let item = secuencias.find(s => s.id === idSecuencia);
     if (!item) return;
-    let nou = prompt("Modifica aquesta sessió futura:", item.contenido);
-    if (nou !== null && nou.trim() !== "") {
-        item.contenido = nou;
-        saveAll();
+    let nouText = prompt("Edita la sessió futura:", item.contenido);
+    if (nouText !== null && nouText.trim() !== "") {
+        item.contenido = nouText;
+        guardar();
         recalcularYRenderizar();
     }
 };
 
-function saveAll() {
-    writeLocalStorage('asig', asignaturas);
-    writeLocalStorage('hist', historial);
-    writeLocalStorage('sec', secuencias);
-}
-
 function recalcularYRenderizar() {
     const hoyStr = new Date().toISOString().split('T')[0];
-    document.getElementById('txt-fecha-hoy').innerText = new Date().toLocaleDateString('ca-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
+    const fHoyElem = document.getElementById('txt-fecha-hoy');
+    if(fHoyElem) fHoyElem.innerText = new Date().toLocaleDateString('ca-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
 
     if (!asignaturaSeleccionada) {
         document.getElementById('txt-asignatura-hoy').innerText = "Sense matèries actives";
         document.getElementById('txt-num-sesion').innerText = "Sessió --";
-        document.getElementById('txt-contenido-sesion').innerText = "Configureu una matèria a dalt.";
-        document.getElementById('grid-proyeccion').innerHTML = '<div class="text-xs text-slate-400 p-4 text-center">Sense projecció.</div>';
+        document.getElementById('txt-contenido-sesion').innerText = "Crea una matèria a la configuració superior.";
+        document.getElementById('grid-proyeccion').innerHTML = '<div class="text-xs text-slate-400 p-4 text-center">No hi ha contingut projectat.</div>';
         document.getElementById('table-resumen-body').innerHTML = "";
         return;
     }
 
     const asigActual = asignaturas.find(a => a.id === asignaturaSeleccionada);
-    document.getElementById('txt-asignatura-hoy').innerText = asigActual ? asigActual.nombre : "-";
+    if (!asigActual) return;
+
+    document.getElementById('txt-asignatura-hoy').innerText = asigActual.nombre;
 
     const secuenciaAsig = secuencias.filter(s => s.curso === asignaturaSeleccionada).sort((a,b) => a.orden - b.orden);
     const historialAsig = historial.filter(h => h.asignaturaId === asignaturaSeleccionada);
 
-    let htmlProyeccion = ""; let htmlResumen = ""; let idxSec = 0; let fLoop = new Date(); let totalClases = 0;
+    let htmlProyeccion = ""; let htmlResumen = ""; let indiceSecuenciaActual = 0; let fechaBucle = new Date(); let clasesCalculadas = 0;
 
     historial.forEach(h => {
         const asig = asignaturas.find(a => a.id === h.asignaturaId);
@@ -211,56 +216,53 @@ function recalcularYRenderizar() {
             '<td class="p-3">' + (h.estado.includes('VAGA') ? 'Classe desplaçada en cascada' : 'Sessió lectiva completada') + '</td>' +
         '</tr>';
     });
-    document.getElementById('table-resumen-body').innerHTML = htmlResumen || '<tr><td colspan="4" class="p-3 text-center text-slate-400">Cap registre guardat encara.</td></tr>';
+    document.getElementById('table-resumen-body').innerHTML = htmlResumen || '<tr><td colspan="4" class="p-4 text-center text-slate-400">Cap registre validat encara.</td></tr>';
 
-    while (totalClases < 12) {
-        const wDay = fLoop.getDay();
-        const fIso = fLoop.toISOString().split('T')[0];
+    while (clasesCalculadas < 15) {
+        const diaSemana = fechaBucle.getDay();
+        const fechaIso = fechaBucle.toISOString().split('T')[0];
 
-        if (asigActual.diasLectivos.includes(wDay)) {
-            const histRecord = historialAsig.find(h => h.fechaReal === fIso);
-            let curSec = secuenciaAsig[idxSec];
-            let labelS = curSec ? "S." + curSec.orden : "Fi";
-            let txtConten = curSec ? curSec.contenido : "Bloc acadèmic completat.";
-            let styleBox = "bg-white border-slate-200 text-slate-600";
-            let btnEdit = curSec ? '<button onclick="editarFilaFutura('' + curSec.id + '')" class="text-[10px] bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-md text-slate-500 ml-2">✏️</button>' : '';
+        if (asigActual.diasLectivos.includes(diaSemana)) {
+            const recordHistorial = historialAsig.find(h => h.fechaReal === fechaIso);
+            let actualSec = secuenciaAsig[indiceSecuenciaActual];
+            let estadoTexto = actualSec ? "S." + actualSec.orden : "Fi";
+            let contenidoClase = actualSec ? actualSec.contenido : "Mòdul finalitzat.";
+            let cssEstilo = "bg-white border-slate-200 text-slate-600";
+            let botonEditarFila = actualSec ? '<button onclick="editarFilaFutura('' + actualSec.id + '')" class="text-[10px] bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-md text-slate-500 ml-2 cursor-pointer">✏️</button>' : '';
 
-            if (histRecord) {
-                if (histRecord.estado.includes('VAGA')) {
-                    labelS = "⚠️ MOVED";
-                    txtConten = "Incidència de calendari (Vaga / Festiu / Baixa). El temari sencer es mou en cascada.";
-                    styleBox = "bg-rose-50/50 border-rose-200 text-rose-900/60 line-through";
-                    btnEdit = "";
+            if (recordHistorial) {
+                if (recordHistorial.estado.includes('VAGA')) {
+                    estadoTexto = "⚠️ DESPLAÇAT";
+                    contenidoClase = "Incidència de calendari (Vaga/Festiu). El temari sencer es mou en cascada.";
+                    cssEstilo = "bg-rose-50/50 border-rose-200 text-rose-900/60 line-through";
+                    botonEditarFila = "";
                 } else {
-                    styleBox = "bg-emerald-50/40 border-emerald-200 text-slate-700 font-medium";
-                    if (curSec) idxSec++;
+                    cssEstilo = "bg-emerald-50/40 border-emerald-200 text-slate-700 font-medium";
+                    if (actualSec) indiceSecuenciaActual++;
                 }
             } else {
-                if (curSec) idxSec++;
+                if (actualSec) indiceSecuenciaActual++;
             }
 
-            if (fIso === hoyStr) {
-                const sHoy = secuenciaAsig[idxSec - 1] || { orden: "--", contenido: "Cap lliçó pendent." };
+            if (fechaIso === hoyStr) {
+                const sHoy = secuenciaAsig[indiceSecuenciaActual - 1] || { orden: "--", contenido: "Cap lliçó pendent." };
                 document.getElementById('txt-num-sesion').innerText = "Sessió " + sHoy.orden;
                 document.getElementById('txt-contenido-sesion').innerText = sHoy.contenido;
             }
 
-            let dayLabel = fLoop.toLocaleDateString('ca-ES', { weekday: 'short' }).toUpperCase();
-            let dateLabel = fLoop.toLocaleDateString('ca-ES', { month: 'short', day: 'numeric' }).toUpperCase();
-
-            htmlProyeccion += '<div class="p-3 border rounded-xl flex justify-between items-center ' + styleBox + '">' +
+            htmlProyeccion += '<div class="p-3 border rounded-xl flex justify-between items-center ' + cssEstilo + '">' +
                 '<div class="flex-1">' +
-                    '<span class="text-[10px] font-bold block uppercase text-slate-400">' + dayLabel + '., ' + dateLabel + '</span>' +
-                    '<p class="text-xs mt-0.5">' + txtConten + '</p>' +
+                    '<span class="text-[10px] font-bold block uppercase text-slate-400">' + fechaBucle.toLocaleDateString('ca-ES', { weekday: 'short', month: 'short', day: 'numeric' }) + '</span>' +
+                    '<p class="text-xs mt-0.5">' + contenidoClase + '</p>' +
                 '</div>' +
                 '<div class="flex items-center gap-1">' +
-                    '<span class="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">' + labelS + '</span>' +
-                    btnEdit +
+                    '<span class="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 text-slate-700 whitespace-nowrap">' + estadoTexto + '</span>' +
+                    botonEditarFila +
                 '</div>' +
             '</div>';
-            totalClases++;
+            clasesCalculadas++;
         }
-        fLoop.setDate(fLoop.getDate() + 1);
+        fechaBucle.setDate(fechaBucle.getDate() + 1);
     }
     document.getElementById('grid-proyeccion').innerHTML = htmlProyeccion;
 }

@@ -1,8 +1,1 @@
-{
-  "name": "Planificador LOMLOE",
-  "short_name": "LOMLOE Plan",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#0f172a"
-}
+{"name": "Planificador LOMLOE", "short_name": "Planificador", "start_url": "index.html", "display": "standalone"}
