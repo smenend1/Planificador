@@ -1,1 +1,1 @@
-/* Service Worker actiu */
+/* SW */

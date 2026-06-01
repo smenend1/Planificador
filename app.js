@@ -1,4 +1,13 @@
-// Lògica de control unificada i robusta per a GitHub Pages
+// 📅 Catàleg LOMLOE Unificat directament a app.js per evitar fallades de càrrega asíncrona
+const MATERIES_LOMLOE = {
+    "1ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Biologia i Geologia", "Educació Física", "Visual i Plàstica"],
+    "2ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Física i Química", "Educació Física", "Música", "Tecnologia i Digitalització"],
+    "3ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques", "Geografia i Història", "Biologia i Geologia", "Física i Química", "Educació Física", "Educació en Valors Cívics"],
+    "4ESO": ["Llengua Catalana i Literatura", "Llengua Castellana i Literatura", "Anglès", "Matemàtiques (A/B)", "Geografia i Història", "Educació Física", "Llatí", "Biologia i Geologia", "Física i Química", "Economia i Emprenedoria", "Tecnologia", "Filosofia"],
+    "1BAT": ["Llengua Catalana i Literatura I", "Llengua Castellana i Literatura I", "Anglès I", "Filosofia", "Educació Física", "Matemàtiques I", "Llatí I", "Matemàtiques Aplicades a les CCSS I", "Història del Món Contemporani", "Dibuix Tècnic I", "Química I", "Biologia I"],
+    "2BAT": ["Llengua Catalana i Literatura II", "Llengua Castellana i Literatura II", "Anglès II", "Història d'Espanya", "Història de la Filosofia", "Matemàtiques II", "Llatí II", "Matemàtiques Aplicades a les CCSS II", "Geografia", "Física II", "Química II", "Biologia II", "Història de l'Art"]
+};
+
 let asignaturas = JSON.parse(localStorage.getItem('asig')) || [
     { id: "4ESO-Tecnologia-A", nombre: "4t d'ESO - Tecnologia (Grup A)", diasLectivos: [1, 2, 3] },
     { id: "1ESO-Matemàtiques-A", nombre: "1r d'ESO - Matemàtiques (Grup A)", diasLectivos: [1, 3] }
@@ -6,11 +15,10 @@ let asignaturas = JSON.parse(localStorage.getItem('asig')) || [
 let historial = JSON.parse(localStorage.getItem('hist')) || [];
 let secuencias = JSON.parse(localStorage.getItem('sec')) || [];
 
-// Inicialitzar contingut si està completament net
 if (secuencias.length === 0) {
     asignaturas.forEach(a => {
         for (let i = 1; i <= 15; i++) {
-            secuencias.push({ id: "SEC-" + a.id + "-" + i, curso: a.id, orden: i, contenido: "Tema de treball planificat: Sessió número " + i + " de la programació curricular." });
+            secuencias.push({ id: "SEC-" + a.id + "-" + i, curso: a.id, orden: i, contenido: "Tema de treball planificat: Sessió número " + i + " de la programació." });
         }
     });
 }
@@ -32,14 +40,16 @@ function guardar() {
 function initLOMLOEDropdowns() {
     const etapaSelect = document.getElementById('reg-etapa');
     const materiaSelect = document.getElementById('reg-materia');
+    
     if (!etapaSelect || !materiaSelect) return;
 
     function actualizarMaterias() {
         const etapa = etapaSelect.value;
         const llista = MATERIES_LOMLOE[etapa] || [];
-        materiaSelect.innerHTML = llista.map(m => '<option value="' + m + '">' + m + '</option>').join('');
+        materiaSelect.innerHTML = llista.map(m => `<option value="${m}">${m}</option>`).join('');
     }
 
+    // Assignar event de canvi i forçar la primera càrrega immediata de les matèries del select
     etapaSelect.addEventListener('change', actualizarMaterias);
     actualizarMaterias();
 
@@ -48,15 +58,17 @@ function initLOMLOEDropdowns() {
         const materia = materiaSelect.value;
         const grup = document.getElementById('reg-grup').value;
         
-        const idGenerat = etapaSelect.value + "-" + materia.replace(/\s+/g, '') + "-" + grup;
-        const nomComplet = etapaTxt + " - " + materia + " (Grup " + grup + ")";
+        if(!materia) return alert("⚠️ Selecciona una matèria oficial primer.");
+
+        const idGenerat = `${etapaSelect.value}-${materia.replace(/\s+/g, '')}-${grup}`;
+        const nomComplet = `${etapaTxt} - ${materia} (Grup ${grup})`;
 
         if (asignaturas.some(a => a.id === idGenerat)) return alert("⚠️ Aquesta matèria ja està registrada.");
 
         asignaturas.push({ id: idGenerat, nombre: nomComplet, diasLectivos: [1, 2, 3] });
 
         for (let i = 1; i <= 15; i++) {
-            secuencias.push({ id: "SEC-" + idGenerat + "-" + i, curso: idGenerat, orden: i, contenido: "Programació de contingut: Sessió " + i });
+            secuencias.push({ id: `SEC-${idGenerat}-${i}`, curso: idGenerat, orden: i, contenido: `Programació de contingut: Sessió ${i}` });
         }
 
         asignaturaSeleccionada = idGenerat;
@@ -70,7 +82,7 @@ function initLOMLOEDropdowns() {
 function actualizarSelectorTrabajo() {
     const sel = document.getElementById('select-asignatura');
     if (!sel) return;
-    sel.innerHTML = asignaturas.map(a => '<option value="' + a.id + '" ' + (a.id === asignaturaSeleccionada ? 'selected' : '') + '>' + a.nombre + '</option>').join('');
+    sel.innerHTML = asignaturas.map(a => `<option value="${a.id}" ${a.id === asignaturaSeleccionada ? 'selected' : ''}>${a.nombre}</option>`).join('');
     if (asignaturas.length === 0) sel.innerHTML = '<option value="">Sense matèries actives</option>';
 }
 
@@ -100,7 +112,7 @@ function initUI() {
     document.getElementById('btn-print').addEventListener('click', () => window.print());
     
     document.getElementById('btn-eliminar-materia').addEventListener('click', () => {
-        if (!asignaturaSeleccionada) return alert("No hi ha matèria.");
+        if (!asignaturaSeleccionada) return alert("No hi ha cap matèria seleccionada.");
         if (confirm("Vols eliminar completament aquesta matèria activa?")) {
             asignaturas = asignaturas.filter(a => a.id !== asignaturaSeleccionada);
             secuencias = secuencias.filter(s => s.curso !== asignaturaSeleccionada);
@@ -148,7 +160,7 @@ function initUI() {
                 actualizarSelectorTrabajo();
                 marcarChecksDias();
                 recalcularYRenderizar();
-            } catch(err) { alert("Error de fitxer."); }
+            } catch(err) { alert("Error al carregar el fitxer JSON."); }
         };
         reader.readAsText(file);
     });
