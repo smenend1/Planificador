@@ -1,60 +1,62 @@
-let db;
+const DB_NAME = 'PlanificadorDocentDB';
+const DB_VERSION = 3;
 
-function inicializarDB() {
+function abrirDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('PlanificadorLOMLOEDB', 3);
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
 
         request.onupgradeneeded = (event) => {
-            const dbInstance = event.target.result;
-            if (!dbInstance.objectStoreNames.contains('asignaturas')) {
-                dbInstance.createObjectStore('asignaturas', { keyPath: 'id' });
+            const db = event.target.result;
+            
+            // Creación limpia de los almacenes
+            if (!db.objectStoreNames.contains('asignaturas')) {
+                db.createObjectStore('asignaturas', { keyPath: 'id' });
             }
-            if (!dbInstance.objectStoreNames.contains('secuencias')) {
-                dbInstance.createObjectStore('secuencias', { keyPath: 'id' });
+            if (!db.objectStoreNames.contains('secuencias')) {
+                db.createObjectStore('secuencias', { keyPath: 'id' });
             }
-            if (!dbInstance.objectStoreNames.contains('historial')) {
-                dbInstance.createObjectStore('historial', { keyPath: 'fechaReal' });
+            if (!db.objectStoreNames.contains('historial')) {
+                db.createObjectStore('historial', { keyPath: 'id', autoIncrement: true });
             }
         };
 
-        request.onsuccess = (event) => {
-            db = event.target.result;
-            resolve(db);
-        };
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = (event) => reject(event.target.error);
+    });
+}
 
+async function guardarDato(storeName, data) {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.put(data);
+
+        request.onsuccess = () => resolve(true);
         request.onerror = (event) => reject(event.target.error);
     });
 }
 
 async function obtenerTodos(storeName) {
-    if (!db) await inicializarDB();
+    const db = await abrirDB();
     return new Promise((resolve, reject) => {
         const transaction = db.transaction(storeName, 'readonly');
-        const store = transaction.objectStore(transaction.objectStoreNames[0]);
+        const store = transaction.objectStore(storeName);
         const request = store.getAll();
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-}
 
-async function guardarDato(storeName, data) {
-    if (!db) await inicializarDB();
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction(storeName, 'readwrite');
-        const store = transaction.objectStore(transaction.objectStoreNames[0]);
-        const request = store.put(data);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = (event) => reject(event.target.error);
     });
 }
 
 async function vaciarStore(storeName) {
-    if (!db) await inicializarDB();
+    const db = await abrirDB();
     return new Promise((resolve, reject) => {
         const transaction = db.transaction(storeName, 'readwrite');
-        const store = transaction.objectStore(transaction.objectStoreNames[0]);
+        const store = transaction.objectStore(storeName);
         const request = store.clear();
-        request.onsuccess = () => resolve();
-        request.onerror = () => reject(request.error);
+
+        request.onsuccess = () => resolve(true);
+        request.onerror = (event) => reject(event.target.error);
     });
 }
